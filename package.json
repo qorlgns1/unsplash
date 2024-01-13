@@ -1,15 +1,10 @@
 {
-  "name": "nextjs-starter",
-  "description": "A Next.js starter that includes all you need to build amazing projects",
+  "name": "willog-assignment",
+  "description": "willog-assignment",
   "version": "1.0.0",
   "private": true,
-  "author": "abel chang<cwuyiqing@gmail.com>",
+  "author": "kihoon bae<rlgns1129@naver.com>",
   "license": "MIT",
-  "keywords": [
-    "nextjs",
-    "starter",
-    "typescript"
-  ],
   "scripts": {
     "dev": "next",
     "build": "next build",
