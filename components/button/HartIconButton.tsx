@@ -1,23 +1,28 @@
 import React from 'react'
-import HartSvg from '@/assets/icons/heart.svg'
+
 import styled from '@emotion/styled'
 
-interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  like?: boolean
+import Button, { type ButtonProps } from '@/components/button/Button'
+import HartIcon, { type HartIconProps } from '@/components/icon/HartIcon'
+
+interface Props extends ButtonProps, React.ButtonHTMLAttributes<HTMLButtonElement> {
+  like?: HartIconProps['like']
 }
 
-const HartIconButton = ({ like, ...rest }: Props) => {
+const HartIconButton = ({ like, children, ...rest }: Props) => {
   return (
-    <Button like={like} {...rest}>
-      <HartSvg />
-    </Button>
+    <StyledButton {...rest}>
+      {children}
+      <HartIcon like={like} />
+    </StyledButton>
   )
 }
 
-const Button = styled.button<Props>`
-  & > svg > path {
-    stroke: ${({ like }) => (like === undefined ? '#111111' : 'white')};
-    fill: ${({ like }) => (like ? '#da604b' : 'transparent')};
+const StyledButton = styled(Button)`
+  :hover {
+    svg > path {
+      stroke: black;
+    }
   }
 `
 
