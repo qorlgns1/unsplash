@@ -20,6 +20,7 @@ module.exports = {
     '<THIRD_PARTY_MODULES>',
     '^@/components/(.*)$',
     '^@/assets/(.*)$',
+    '^@/styles/(.*)$',
     '^[./]',
   ],
   importOrderSeparation: true,
