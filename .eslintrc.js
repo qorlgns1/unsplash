@@ -12,5 +12,6 @@ module.exports = {
   },
   rules: {
     'import/no-anonymous-default-export': 'off',
+    '@typescript-eslint/no-empty-interface': 'off',
   },
 }
