@@ -14,4 +14,14 @@ module.exports = {
   insertPragma: false,
   proseWrap: 'preserve',
   endOfLine: 'lf',
+  plugins: ['@trivago/prettier-plugin-sort-imports'],
+  importOrder: [
+    '^react',
+    '<THIRD_PARTY_MODULES>',
+    '^@/components/(.*)$',
+    '^@/assets/(.*)$',
+    '^[./]',
+  ],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
 }
