@@ -15,9 +15,9 @@
     "postinstall": "husky install"
   },
   "lint-staged": {
-    "./**/*.{ts,js,jsx,tsx}": [
-      "pnpm run lint",
-      "pnpm run format"
+    "./**/*.{ts,jsx,tsx}": [
+      "npm run lint",
+      "npm run format"
     ]
   },
   "dependencies": {
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@emotion/react": "11.11.3",
     "@emotion/styled": "11.11.0",
+    "@svgr/webpack": "8.1.0",
     "@types/node": "20.11.0",
     "@types/react": "18.2.47",
     "@types/react-dom": "18.2.18",
