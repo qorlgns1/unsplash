@@ -18,11 +18,11 @@ const Header = ({ children }: Props) => {
   return (
     <>
       <header className="p-8">
-        <Flex justify="space-between">
+        <Flex justify="space-between" wrap="wrap" gap="2rem">
           <LeftSection>
             <Logo />
           </LeftSection>
-          <RightSection gap="0.5rem">
+          <RightSection gap="1rem" wrap="wrap">
             <Buttons gap="1rem">
               <Button>사진 제출</Button>
               <Link href="/mark">
