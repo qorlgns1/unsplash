@@ -1,7 +1,10 @@
 import type { ReactElement, ReactNode } from 'react'
+
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import { Layout } from '@/components'
+
+import Header from '@/components/header/Header'
+
 import '@/styles/global.css'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -13,7 +16,7 @@ type AppPropsWithLayout = AppProps & {
 }
 
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>)
+  const getLayout = Component.getLayout || ((page) => <Header>{page}</Header>)
 
   return getLayout(<Component {...pageProps} />)
 }
