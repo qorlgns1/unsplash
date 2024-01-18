@@ -68,6 +68,24 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    photoRepository.getRandomPhotos().then(({ type, response }) => {
+      if (type === 'success') {
+        const randomPhotos = response instanceof Array ? response : [response]
+
+        const photos = {
+          total: randomPhotos.length,
+          total_pages: 1,
+          results: randomPhotos,
+        }
+
+        setPhotos(updatePhotosBookmarkedByUser(photos))
+      } else {
+        alert('Error: get random photos')
+      }
+    })
+  }, [])
+
+  useEffect(() => {
     setIsModalOpen(!!photoDetailId)
   }, [photoDetailId])
 

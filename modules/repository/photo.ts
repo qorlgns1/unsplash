@@ -7,4 +7,7 @@ export const photoRepository = {
   getPhoto: async (id: string) => {
     return api.photos.get({ photoId: id })
   },
+  getRandomPhotos: async () => {
+    return api.photos.getRandom({ count: 10 })
+  },
 }
