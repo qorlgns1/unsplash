@@ -16,8 +16,12 @@ const Hart = styled(Icon)<HartIconProps>`
   display: inline-block;
 
   & > path {
-    stroke: ${({ like }) => (like === undefined ? 'lightgray' : 'white')};
-    fill: ${({ like }) => (like ? '#da604b' : 'transparent')};
+    stroke: #f2f4f6;
+    fill: ${({ like }) => (like ? '#ec5642' : 'transparent')};
+
+    :hover {
+      stroke: #cfd5db;
+    }
   }
 `
 
