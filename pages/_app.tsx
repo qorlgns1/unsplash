@@ -3,6 +3,7 @@ import type { ReactElement, ReactNode } from 'react'
 import type { AppProps } from 'next/app'
 
 import type { NextPage } from 'next'
+import { RecoilRoot } from 'recoil'
 
 import Header from '@/components/header/Header'
 
@@ -17,7 +18,13 @@ type AppPropsWithLayout = AppProps & {
 }
 
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout || ((page) => <Header>{page}</Header>)
+  const getLayout =
+    Component.getLayout ||
+    ((page) => (
+      <RecoilRoot>
+        <Header>{page}</Header>
+      </RecoilRoot>
+    ))
 
   return getLayout(<Component {...pageProps} />)
 }
