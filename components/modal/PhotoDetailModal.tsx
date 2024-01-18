@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react'
 
 import Image from 'next/image'
 
-import { bookmarkAtom } from '@/lib/recoil/atom/bookmark'
-import type { PhotoDetail } from '@/modules/domain/Photo'
+import type { Photo, PhotoDetail } from '@/modules/domain/Photo'
 import { photoRepository } from '@/modules/repository/photo'
 import { getTimeDifference } from '@/utils/date'
 import styled from '@emotion/styled'
-import { useRecoilState } from 'recoil'
 
 import Portal from '@/components/modal/Portal'
 
@@ -20,18 +18,38 @@ import { BackDrop } from './BackDrop'
 interface Props {
   onModalClose: () => void
   photoDetailId: string
-  onHartClick: (id: string) => void
+  onHartClick: (photo: Photo) => void
+  bookmark: Record<string, Photo>
 }
 
-const PhotoDetailModal = ({ onModalClose, photoDetailId, onHartClick, ...rest }: Props) => {
-  const [bookmark] = useRecoilState(bookmarkAtom)
+const PhotoDetailModal = ({
+  bookmark,
+  onModalClose,
+  photoDetailId,
+  onHartClick,
+  ...rest
+}: Props) => {
   const [photoDetail, setPhotoDetail] = useState<PhotoDetail>()
-  console.log(photoDetail)
+
+  useEffect(() => {
+    setPhotoDetail((prev) => {
+      if (!prev) return prev
+
+      return bookmark[prev.id]
+        ? { ...prev, liked_by_user: true }
+        : { ...prev, liked_by_user: false }
+    })
+  }, [bookmark])
 
   useEffect(() => {
     photoRepository.getPhoto(photoDetailId).then(({ type, response }) => {
       if (type === 'success') {
-        setPhotoDetail(response)
+        const photoDetail: PhotoDetail = {
+          ...response,
+          liked_by_user: bookmark[response.id] ? true : false,
+        }
+
+        setPhotoDetail(photoDetail)
       } else {
         alert('Error: get photo detail')
         onModalClose()
@@ -70,8 +88,8 @@ const PhotoDetailModal = ({ onModalClose, photoDetailId, onHartClick, ...rest }:
               </Text>
             </HeaderLeft>
             <HeaderRight>
-              <button onClick={() => onHartClick(photoDetail.id)}>
-                <HartIcon like={bookmark[photoDetail.id]} />
+              <button onClick={() => onHartClick(photoDetail)}>
+                <HartIcon like={photoDetail?.liked_by_user} />
               </button>
               <Button hasBorder>다운로드</Button>
             </HeaderRight>

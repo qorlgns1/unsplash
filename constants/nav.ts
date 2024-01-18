@@ -57,3 +57,22 @@ export const NAV_LIST: Nav[][] = [
     },
   ],
 ]
+
+export const BOOKMARK_NAV_LIST: Nav[] = [
+  {
+    title: '사진',
+    link: '/bookmark/photo',
+  },
+  {
+    title: '좋아요',
+    link: '/bookmark/like',
+  },
+  {
+    title: '컬렉션',
+    link: '/bookmark/collection',
+  },
+  {
+    title: '통계',
+    link: '/bookmark/stats',
+  },
+]

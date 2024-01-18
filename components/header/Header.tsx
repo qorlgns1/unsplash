@@ -25,7 +25,7 @@ const Header = ({ children }: Props) => {
           <RightSection gap="1rem" wrap="wrap">
             <Buttons gap="1rem">
               <Button>사진 제출</Button>
-              <Link href="/mark">
+              <Link href="/bookmark/like">
                 <HartIconButton className="h-full" hasBorder={true}>
                   <span>북마크</span>
                   <HartIcon />

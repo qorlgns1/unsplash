@@ -3,7 +3,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 
 import { bookmarkAtom } from '@/lib/recoil/atom/bookmark'
-import type { PhotoResponse } from '@/modules/domain/Photo'
+import type { Photo, PhotoResponse } from '@/modules/domain/Photo'
 import { photoRepository } from '@/modules/repository/photo'
 import styled from '@emotion/styled'
 import { useRecoilState } from 'recoil'
@@ -50,10 +50,10 @@ export default function Home() {
     }
   }
 
-  const handleHartClick = (id: string) => {
+  const handleHartClick = (photo: Photo) => {
     setBookmark((prev) => {
       const bookmark = structuredClone(prev)
-      bookmark[id] ? delete bookmark[id] : (bookmark[id] = true)
+      bookmark[photo.id] ? delete bookmark[photo.id] : (bookmark[photo.id] = photo)
 
       return bookmark
     })
@@ -109,7 +109,7 @@ export default function Home() {
 
       <PhotoList
         className="p-10"
-        data={photos}
+        photos={photos.results}
         onHartClick={handleHartClick}
         onPhotoClick={handlePhotoClick}
       />
@@ -119,6 +119,7 @@ export default function Home() {
           onModalClose={() => setIsModalOpen(false)}
           photoDetailId={photoDetailId}
           onHartClick={handleHartClick}
+          bookmark={bookmark}
         />
       )}
     </>

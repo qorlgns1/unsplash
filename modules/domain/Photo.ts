@@ -1,16 +1,22 @@
-import type { Basic, Full } from 'unsplash-js/dist/methods/photos/types'
-import type { Photos } from 'unsplash-js/dist/methods/search/types/response'
+import type { Basic } from 'unsplash-js/dist/methods/photos/types'
 
-export interface PhotoDetail extends Full {
+export interface Photo
+  extends Pick<
+    Basic,
+    'id' | 'urls' | 'alt_description' | 'width' | 'height' | 'created_at' | 'user'
+  > {
   liked_by_user?: boolean
+}
+
+export interface PhotoDetail extends Photo {
   tags?: {
     title: string
   }[]
   downloads?: number
 }
 
-export interface PhotoResponse extends Photos {
-  results: (Basic & {
-    liked_by_user?: boolean
-  })[]
+export interface PhotoResponse {
+  results: Photo[]
+  total: number
+  total_pages: number
 }

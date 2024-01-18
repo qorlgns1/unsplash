@@ -1,7 +1,8 @@
+import type { Photo } from '@/modules/domain/Photo'
 import { atom } from 'recoil'
 
 interface Bookmark {
-  [key: string]: boolean
+  [photoId: string]: Photo
 }
 
 export const bookmarkAtom = atom<Bookmark>({
