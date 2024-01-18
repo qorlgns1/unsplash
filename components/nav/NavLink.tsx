@@ -21,13 +21,13 @@ const NavLink = ({ children, ...rest }: Props) => {
   }, [router.pathname, rest.href])
 
   return (
-    <StyledLink {...rest} stay={stay}>
+    <StyledLink {...rest} stay={JSON.stringify(stay) as 'true' | 'false'}>
       <Text>{children}</Text>
     </StyledLink>
   )
 }
 
-const StyledLink = styled(Link)<{ stay: boolean }>`
+const StyledLink = styled(Link)<{ stay: 'true' | 'false' }>`
   align-items: center;
   display: inline-flex;
   font-size: 1.4rem;
@@ -36,7 +36,7 @@ const StyledLink = styled(Link)<{ stay: boolean }>`
   white-space: nowrap;
 
   ${({ stay }) =>
-    stay &&
+    JSON.parse(stay) &&
     css`
       box-shadow: inset 0 -2px #111;
       pointer-events: none;
