@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { type FormEvent, useEffect, useRef, useState } from 'react'
 
 import Head from 'next/head'
 
+import type { PhotoResponse } from '@/modules/domain/Photo'
+import { photoRepository } from '@/modules/repository/photo'
 import styled from '@emotion/styled'
 
 import SearchForm from '@/components/form/SearchForm'
+import ImageList from '@/components/image/ImageList'
 import Nav from '@/components/nav/NavBar'
 
 import { NAV_LIST } from '@/constants/nav'
@@ -15,6 +18,25 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
 
   const searchRef = useRef<HTMLInputElement>(null)
+
+  const [photos, setPhotos] = useState<PhotoResponse>({
+    total: 0,
+    total_pages: 0,
+    results: [],
+  })
+  console.log(photos)
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const query = searchRef.current?.value || ''
+    const { type, response } = await photoRepository.searchPhotos(query)
+    if (type === 'success') {
+      setPhotos(response)
+    } else {
+      alert('Error: search photos')
+    }
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -40,13 +62,19 @@ export default function Home() {
           <Infomation>모든 지역에 있는 크리에어터들의 지원을 받습니다.</Infomation>
         </TextWrapper>
         <SearchForm
-          formProps={{ className: 'px-4 w-full' }}
+          formProps={{ className: 'px-4 w-full', onSubmit }}
           inputProps={{
             ref: searchRef,
             placeholder: '고해상도 이미지 검색',
           }}
         />
       </SearchWrapper>
+
+      <ImageList
+        className="p-10"
+        data={photos}
+        onHartClick={(id) => console.log(`hart click id = ${id}`)}
+      />
     </>
   )
 }
