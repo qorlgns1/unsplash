@@ -1,9 +1,10 @@
 import React from 'react'
 
-import { NAV_LIST } from '@/constants/nav'
 import Head from 'next/head'
 
 import Nav from '@/components/nav/NavBar'
+
+import { NAV_LIST } from '@/constants/nav'
 
 const Home = () => {
   return (

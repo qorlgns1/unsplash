@@ -1,9 +1,10 @@
 import React from 'react'
 
-import type { Nav } from '@/constants/nav'
 import styled from '@emotion/styled'
 
 import NavLink from '@/components/nav/NavLink'
+
+import type { Nav } from '@/constants/nav'
 
 interface Props {
   nav: Nav[][]

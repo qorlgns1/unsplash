@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
 import Link, { type LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
+
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
 
 import Text from '@/components/text/Text'
 

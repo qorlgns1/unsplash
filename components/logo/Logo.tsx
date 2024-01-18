@@ -1,7 +1,8 @@
 import React from 'react'
 
-import styled from '@emotion/styled'
 import Link from 'next/link'
+
+import styled from '@emotion/styled'
 
 import LogoIcon from '@/components/icon/LogoIcon'
 
