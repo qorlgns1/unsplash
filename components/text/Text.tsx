@@ -2,18 +2,20 @@ import React from 'react'
 
 import styled from '@emotion/styled'
 
-interface Props extends React.HTMLAttributes<HTMLSpanElement> {}
-
-const Text = (props: Props) => {
-  return <BaseText {...props} />
+interface Props extends React.HTMLAttributes<HTMLSpanElement> {
+  color?: 'primary' | 'black'
 }
 
-const BaseText = styled.span`
+const Text = ({ color = 'primary', ...rest }: Props) => {
+  return <BaseText color={color} {...rest} />
+}
+
+const BaseText = styled.span<Props>`
   align-items: center;
   display: flex;
   font-size: 1.4rem;
   font-weight: 500;
-  color: #767676;
+  color: ${({ color }) => (color === 'primary' ? '#767676' : '#000')};
 `
 
 export default Text

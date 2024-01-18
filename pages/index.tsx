@@ -2,13 +2,16 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 
 import Head from 'next/head'
 
+import { bookmarkAtom } from '@/lib/recoil/atom/bookmark'
 import type { PhotoResponse } from '@/modules/domain/Photo'
 import { photoRepository } from '@/modules/repository/photo'
 import styled from '@emotion/styled'
+import { useRecoilState } from 'recoil'
 
 import SearchForm from '@/components/form/SearchForm'
-import ImageList from '@/components/image/ImageList'
+import PhotoDetailModal from '@/components/modal/PhotoDetailModal'
 import Nav from '@/components/nav/NavBar'
+import PhotoList from '@/components/photo/PhotoList'
 
 import { NAV_LIST } from '@/constants/nav'
 
@@ -16,17 +19,18 @@ import leavesImage from '@/assets/images/leaves.jpg'
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
-
-  const searchRef = useRef<HTMLInputElement>(null)
-
+  const [photoDetailId, setPhotoDetailId] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [photos, setPhotos] = useState<PhotoResponse>({
     total: 0,
     total_pages: 0,
     results: [],
   })
-  console.log(photos)
+  const [bookmark, setBookmark] = useRecoilState(bookmarkAtom)
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const handleSearchPhoto = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const query = searchRef.current?.value || ''
@@ -38,9 +42,35 @@ export default function Home() {
     }
   }
 
+  const handleHartClick = (id: string) => {
+    setBookmark((prev) => ({ ...prev, [id]: !prev[id] }))
+  }
+
+  const handlePhotoClick = async (id: string) => {
+    setPhotoDetailId(id)
+  }
+
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    setIsModalOpen(!!photoDetailId)
+  }, [photoDetailId])
+
+  useEffect(() => {
+    if (!isModalOpen) setPhotoDetailId('')
+  }, [isModalOpen])
+
+  useEffect(() => {
+    setPhotos((prev) => {
+      const newPhotos = structuredClone(prev)
+      newPhotos.results = newPhotos.results.map((photo) =>
+        bookmark[photo.id] ? { ...photo, liked_by_user: true } : photo
+      )
+      return newPhotos
+    })
+  }, [bookmark])
 
   if (!mounted) {
     return <div>loading...</div>
@@ -62,7 +92,7 @@ export default function Home() {
           <Infomation>모든 지역에 있는 크리에어터들의 지원을 받습니다.</Infomation>
         </TextWrapper>
         <SearchForm
-          formProps={{ className: 'px-4 w-full', onSubmit }}
+          formProps={{ className: 'px-4 w-full', onSubmit: handleSearchPhoto }}
           inputProps={{
             ref: searchRef,
             placeholder: '고해상도 이미지 검색',
@@ -70,11 +100,20 @@ export default function Home() {
         />
       </SearchWrapper>
 
-      <ImageList
+      <PhotoList
         className="p-10"
         data={photos}
-        onHartClick={(id) => console.log(`hart click id = ${id}`)}
+        onHartClick={handleHartClick}
+        onPhotoClick={handlePhotoClick}
       />
+
+      {isModalOpen && (
+        <PhotoDetailModal
+          onModalClose={() => setIsModalOpen(false)}
+          photoDetailId={photoDetailId}
+          onHartClick={handleHartClick}
+        />
+      )}
     </>
   )
 }
