@@ -41,8 +41,8 @@ export default PhotoList
 
 const ImageWrapper = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 20rem));
+  justify-content: center;
   max-width: 132rem;
   margin: 0 auto;
   gap: 1rem;
