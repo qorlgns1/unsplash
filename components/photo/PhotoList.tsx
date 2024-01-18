@@ -14,7 +14,7 @@ interface Props extends React.HTMLAttributes<HTMLUListElement> {
 }
 
 const PhotoList = ({ data, onPhotoClick, onHartClick, ...rest }: Props) => {
-  const handleHartClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (id: string) => {
+  const handleHartClick = (id: string) => (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
     onHartClick(id)
   }
@@ -25,9 +25,9 @@ const PhotoList = ({ data, onPhotoClick, onHartClick, ...rest }: Props) => {
         const { id, urls, alt_description, liked_by_user } = photo
 
         return (
-          <Li key={id} onClick={() => onPhotoClick(id)}>
+          <Li key={id + liked_by_user} onClick={() => onPhotoClick(id)}>
             <StyledImage src={urls.regular} alt={alt_description ?? ''} width={250} height={250} />
-            <button onClick={(e) => handleHartClick(e)(id)}>
+            <button onClick={handleHartClick(id)}>
               <Hart like={liked_by_user} />
             </button>
           </Li>

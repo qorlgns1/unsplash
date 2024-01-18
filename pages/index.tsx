@@ -30,20 +30,33 @@ export default function Home() {
 
   const searchRef = useRef<HTMLInputElement>(null)
 
+  const updatePhotosBookmarkedByUser = (photos: PhotoResponse) => {
+    const newPhotos = structuredClone(photos)
+    newPhotos.results = newPhotos.results.map((photo) =>
+      bookmark[photo.id] ? { ...photo, liked_by_user: true } : { ...photo, liked_by_user: false }
+    )
+    return newPhotos
+  }
+
   const handleSearchPhoto = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const query = searchRef.current?.value || ''
     const { type, response } = await photoRepository.searchPhotos(query)
     if (type === 'success') {
-      setPhotos(response)
+      setPhotos(updatePhotosBookmarkedByUser(response))
     } else {
       alert('Error: search photos')
     }
   }
 
   const handleHartClick = (id: string) => {
-    setBookmark((prev) => ({ ...prev, [id]: !prev[id] }))
+    setBookmark((prev) => {
+      const bookmark = structuredClone(prev)
+      bookmark[id] ? delete bookmark[id] : (bookmark[id] = true)
+
+      return bookmark
+    })
   }
 
   const handlePhotoClick = async (id: string) => {
@@ -63,13 +76,7 @@ export default function Home() {
   }, [isModalOpen])
 
   useEffect(() => {
-    setPhotos((prev) => {
-      const newPhotos = structuredClone(prev)
-      newPhotos.results = newPhotos.results.map((photo) =>
-        bookmark[photo.id] ? { ...photo, liked_by_user: true } : photo
-      )
-      return newPhotos
-    })
+    setPhotos(updatePhotosBookmarkedByUser)
   }, [bookmark])
 
   if (!mounted) {
