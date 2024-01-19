@@ -3,8 +3,7 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 import Head from 'next/head'
 
 import useBookmark from '@/hooks/useBookmark'
-import type { PhotoResponse } from '@/modules/domain/Photo'
-import { photoRepository } from '@/modules/repository/photo'
+import usePhoto from '@/hooks/usePhoto'
 import styled from '@emotion/styled'
 
 import Pagination from '@/components/Pagination'
@@ -21,34 +20,13 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [photoDetailId, setPhotoDetailId] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [photoResponse, setPhotoResponse] = useState<PhotoResponse>({
-    total: 0,
-    total_pages: 0,
-    results: [],
-  })
   const [currentPage, setCurrentPage] = useState(1)
   const [beforeKeyword, setBeforeKeyword] = useState('')
 
-  const { bookmark, toggleBookmark, updatePhotoWithBookmarkStatus } = useBookmark()
+  const { bookmark, toggleBookmark } = useBookmark()
+  const { photoResponse, fetchSearchPhoto, fetchRandomPhotos } = usePhoto()
 
   const searchRef = useRef<HTMLInputElement>(null)
-
-  const updatePhotoResponseWithBookmarkStatus = (photoResponse: PhotoResponse) => ({
-    ...photoResponse,
-    results: photoResponse.results.map(updatePhotoWithBookmarkStatus),
-  })
-
-  const searchPhoto = async (page: number) => {
-    const query = searchRef.current?.value || beforeKeyword
-    const { type, response } = await photoRepository.searchPhotos({ query, page })
-    if (type === 'success') {
-      const photoResponse = updatePhotoResponseWithBookmarkStatus(response)
-      setPhotoResponse(photoResponse)
-      setBeforeKeyword(query)
-    } else {
-      alert('Error: search photos')
-    }
-  }
 
   const handlePhotoClick = async (id: string) => {
     setIsModalOpen(true)
@@ -58,50 +36,39 @@ export default function Home() {
   const handleSearchOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    setCurrentPage(1)
-    await searchPhoto(1)
+    const searchKeyword = searchRef.current?.value || beforeKeyword
+
+    fetchSearchPhoto({
+      searchQuery: searchKeyword,
+      page: 1,
+      onSuccess: () => {
+        setCurrentPage(1)
+        setBeforeKeyword(searchKeyword)
+      },
+    })
   }
 
   const handlePageChange = async (page: number) => {
     if (page === currentPage) return
 
-    setCurrentPage(page)
-    await searchPhoto(page)
+    const searchKeyword = searchRef.current?.value || beforeKeyword
+    fetchSearchPhoto({
+      searchQuery: searchKeyword,
+      page,
+      onSuccess: () => {
+        setCurrentPage(page)
+      },
+    })
   }
 
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    const fetchRandomPhotos = async () => {
-      const { type, response } = await photoRepository.getRandomPhotos()
-      if (type === 'success') {
-        const randomPhotos = Array.isArray(response) ? response : [response]
-
-        const randomPhotoResponse: PhotoResponse = {
-          total: randomPhotos.length,
-          total_pages: 1,
-          results: randomPhotos,
-        }
-
-        const photoResponse = updatePhotoResponseWithBookmarkStatus(randomPhotoResponse)
-        setPhotoResponse(photoResponse)
-      } else {
-        alert('Error: get random photos')
-      }
-    }
-
     fetchRandomPhotos()
   }, [])
 
   useEffect(() => {
     if (!isModalOpen) setPhotoDetailId('')
   }, [isModalOpen])
-
-  useEffect(() => {
-    setPhotoResponse(updatePhotoResponseWithBookmarkStatus)
-  }, [bookmark])
 
   if (!mounted) {
     return <div>loading...</div>
