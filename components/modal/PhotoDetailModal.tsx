@@ -5,6 +5,7 @@ import Image from 'next/image'
 import type { Photo, PhotoDetail } from '@/modules/domain/Photo'
 import { photoRepository } from '@/modules/repository/photo'
 import { getTimeDifference } from '@/utils/date'
+import { numberWithCommas } from '@/utils/number'
 import styled from '@emotion/styled'
 
 import Portal from '@/components/modal/Portal'
@@ -114,7 +115,7 @@ const PhotoDetailModal = ({
               </Description>
               <Description>
                 <Text>다운로드</Text>
-                <Text color="black">{photoDetail.downloads || 0}</Text>
+                <Text color="black">{numberWithCommas(photoDetail.downloads || 0)}</Text>
               </Description>
             </Descriptions>
 
