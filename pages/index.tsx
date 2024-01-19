@@ -8,6 +8,7 @@ import { photoRepository } from '@/modules/repository/photo'
 import styled from '@emotion/styled'
 import { useRecoilState } from 'recoil'
 
+import Pagination from '@/components/Pagination'
 import SearchForm from '@/components/form/SearchForm'
 import PhotoDetailModal from '@/components/modal/PhotoDetailModal'
 import Nav from '@/components/nav/NavBar'
@@ -27,6 +28,8 @@ export default function Home() {
     results: [],
   })
   const [bookmark, setBookmark] = useRecoilState(bookmarkAtom)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [beforeKeyword, setBeforeKeyword] = useState('')
 
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -41,10 +44,11 @@ export default function Home() {
   const handleSearchPhoto = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const query = searchRef.current?.value || ''
-    const { type, response } = await photoRepository.searchPhotos(query)
+    const query = searchRef.current?.value || beforeKeyword
+    const { type, response } = await photoRepository.searchPhotos(query, currentPage)
     if (type === 'success') {
       setPhotos(updatePhotosBookmarkedByUser(response))
+      setBeforeKeyword(query)
     } else {
       alert('Error: search photos')
     }
@@ -61,6 +65,20 @@ export default function Home() {
 
   const handlePhotoClick = async (id: string) => {
     setPhotoDetailId(id)
+  }
+
+  const handlePageChange = async (page: number) => {
+    if (page === currentPage) return
+    setCurrentPage(page)
+
+    const query = searchRef.current?.value || beforeKeyword
+    const { type, response } = await photoRepository.searchPhotos(query, page)
+    if (type === 'success') {
+      setPhotos(updatePhotosBookmarkedByUser(response))
+      setBeforeKeyword(query)
+    } else {
+      alert('Error: search photos')
+    }
   }
 
   useEffect(() => {
@@ -131,6 +149,16 @@ export default function Home() {
         onHartClick={handleHartClick}
         onPhotoClick={handlePhotoClick}
       />
+
+      {photos && photos.results.length > 0 && searchRef?.current?.value && (
+        <Pagination
+          className="justify-center mb-10"
+          currentPage={currentPage}
+          totalPages={photos.total_pages <= 200 ? photos.total_pages : 200}
+          range={3}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       {isModalOpen && (
         <PhotoDetailModal

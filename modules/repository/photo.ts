@@ -1,8 +1,8 @@
 import { unsplashApi as api } from '@/modules/repository'
 
 export const photoRepository = {
-  searchPhotos: async (query: string) => {
-    return api.search.getPhotos({ query })
+  searchPhotos: async (query: string, page: number) => {
+    return api.search.getPhotos({ query, page, perPage: 12 })
   },
   getPhoto: async (id: string) => {
     return api.photos.get({ photoId: id })
