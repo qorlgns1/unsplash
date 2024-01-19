@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react'
 
 import Head from 'next/head'
 
-import { bookmarkAtom } from '@/lib/recoil/atom/bookmark'
-import type { Photo } from '@/modules/domain/Photo'
+import useBookmark from '@/hooks/useBookmark'
 import styled from '@emotion/styled'
-import { useRecoilState } from 'recoil'
 
 import PhotoDetailModal from '@/components/modal/PhotoDetailModal'
 import NavLink from '@/components/nav/NavLink'
@@ -14,42 +12,19 @@ import PhotoList from '@/components/photo/PhotoList'
 import { BOOKMARK_NAV_LIST } from '@/constants/nav'
 
 const Home = () => {
-  const [bookmark, setBookmark] = useRecoilState(bookmarkAtom)
-  const [photos, setPhotos] = useState(Object.keys(bookmark).map((key) => bookmark[key]))
+  const { bookmark, toggleBookmark, bookmarkedPhotos } = useBookmark()
+
   const [photoDetailId, setPhotoDetailId] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const updatePhotosBookmarkedByUser = (photos: Photo[]) => {
-    return photos.map((photo) =>
-      bookmark[photo.id] ? { ...photo, liked_by_user: true } : { ...photo, liked_by_user: false }
-    )
+  const handlePhotoClick = (id: string) => {
+    setIsModalOpen(true)
+    setPhotoDetailId(id)
   }
-
-  const handleHartClick = (photo: Photo) => {
-    setBookmark((prev) => {
-      const bookmark = structuredClone(prev)
-      bookmark[photo.id] ? delete bookmark[photo.id] : (bookmark[photo.id] = photo)
-
-      return bookmark
-    })
-  }
-
-  const handlePhotoClick = (id: string) => setPhotoDetailId(id)
-
-  useEffect(() => {
-    setIsModalOpen(!!photoDetailId)
-  }, [photoDetailId])
 
   useEffect(() => {
     if (!isModalOpen) setPhotoDetailId('')
   }, [isModalOpen])
-
-  useEffect(() => {
-    setPhotos(() => {
-      const photos = Object.keys(bookmark).map((key) => bookmark[key])
-      return updatePhotosBookmarkedByUser(photos)
-    })
-  }, [bookmark])
 
   return (
     <>
@@ -69,8 +44,8 @@ const Home = () => {
 
       <PhotoList
         className="p-10"
-        photos={photos}
-        onHartClick={handleHartClick}
+        photos={bookmarkedPhotos}
+        onHartClick={toggleBookmark}
         onPhotoClick={handlePhotoClick}
       />
 
@@ -78,7 +53,7 @@ const Home = () => {
         <PhotoDetailModal
           onModalClose={() => setIsModalOpen(false)}
           photoDetailId={photoDetailId}
-          onHartClick={handleHartClick}
+          onHartClick={toggleBookmark}
           bookmark={bookmark}
         />
       )}

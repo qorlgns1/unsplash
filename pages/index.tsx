@@ -2,11 +2,10 @@ import { type FormEvent, useEffect, useRef, useState } from 'react'
 
 import Head from 'next/head'
 
-import { bookmarkAtom } from '@/lib/recoil/atom/bookmark'
-import type { Photo, PhotoResponse } from '@/modules/domain/Photo'
+import useBookmark from '@/hooks/useBookmark'
+import type { PhotoResponse } from '@/modules/domain/Photo'
 import { photoRepository } from '@/modules/repository/photo'
 import styled from '@emotion/styled'
-import { useRecoilState } from 'recoil'
 
 import Pagination from '@/components/Pagination'
 import SearchForm from '@/components/form/SearchForm'
@@ -27,17 +26,16 @@ export default function Home() {
     total_pages: 0,
     results: [],
   })
-  const [bookmark, setBookmark] = useRecoilState(bookmarkAtom)
   const [currentPage, setCurrentPage] = useState(1)
   const [beforeKeyword, setBeforeKeyword] = useState('')
+
+  const { bookmark, toggleBookmark, updatePhotoWithBookmarkStatus } = useBookmark()
 
   const searchRef = useRef<HTMLInputElement>(null)
 
   const updatePhotosBookmarkedByUser = (photos: PhotoResponse) => {
     const newPhotos = structuredClone(photos)
-    newPhotos.results = newPhotos.results.map((photo) =>
-      bookmark[photo.id] ? { ...photo, liked_by_user: true } : { ...photo, liked_by_user: false }
-    )
+    newPhotos.results = newPhotos.results.map(updatePhotoWithBookmarkStatus)
     return newPhotos
   }
 
@@ -54,16 +52,8 @@ export default function Home() {
     }
   }
 
-  const handleHartClick = (photo: Photo) => {
-    setBookmark((prev) => {
-      const bookmark = structuredClone(prev)
-      bookmark[photo.id] ? delete bookmark[photo.id] : (bookmark[photo.id] = photo)
-
-      return bookmark
-    })
-  }
-
   const handlePhotoClick = async (id: string) => {
+    setIsModalOpen(true)
     setPhotoDetailId(id)
   }
 
@@ -104,10 +94,6 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    setIsModalOpen(!!photoDetailId)
-  }, [photoDetailId])
-
-  useEffect(() => {
     if (!isModalOpen) setPhotoDetailId('')
   }, [isModalOpen])
 
@@ -146,7 +132,7 @@ export default function Home() {
       <PhotoList
         className="p-10"
         photos={photos.results}
-        onHartClick={handleHartClick}
+        onHartClick={toggleBookmark}
         onPhotoClick={handlePhotoClick}
       />
 
@@ -164,7 +150,7 @@ export default function Home() {
         <PhotoDetailModal
           onModalClose={() => setIsModalOpen(false)}
           photoDetailId={photoDetailId}
-          onHartClick={handleHartClick}
+          onHartClick={toggleBookmark}
           bookmark={bookmark}
         />
       )}
