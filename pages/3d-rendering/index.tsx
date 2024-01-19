@@ -10,13 +10,13 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>아름다운 무료 이미지 및 사진 | following</title>
+        <title>아름다운 무료 이미지 및 사진 | 3d-rendering</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Nav nav={NAV_LIST} />
 
-      <div>following</div>
+      <div>3d-rendering</div>
     </>
   )
 }
