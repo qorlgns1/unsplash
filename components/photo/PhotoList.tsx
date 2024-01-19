@@ -27,7 +27,7 @@ const PhotoList = ({ photos, onPhotoClick, onHartClick, ...rest }: Props) => {
 
         return (
           <Li key={id + liked_by_user} onClick={() => onPhotoClick(id)}>
-            <StyledImage src={urls.regular} alt={alt_description ?? ''} width={250} height={250} />
+            <StyledImage src={urls.thumb} alt={alt_description ?? ''} width={250} height={250} />
             <button onClick={handleHartClick(photo)}>
               <Hart like={liked_by_user} />
             </button>
