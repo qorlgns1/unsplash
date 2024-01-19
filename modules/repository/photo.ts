@@ -8,6 +8,6 @@ export const photoRepository = {
     return api.photos.get({ photoId: id })
   },
   getRandomPhotos: async () => {
-    return api.photos.getRandom({ count: 10 })
+    return api.photos.getRandom({ count: 12 })
   },
 }
