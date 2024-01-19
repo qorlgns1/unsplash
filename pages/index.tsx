@@ -173,17 +173,18 @@ export default function Home() {
 }
 
 const SearchWrapper = styled.div<{ image: string }>`
-  padding: 5rem 25% 0;
+  padding: 0 25%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 
   background-image: url(${({ image }) => image});
   background-repeat: no-repeat;
   background-size: cover;
 
-  height: 25rem;
+  min-height: 25rem;
 `
 
 const TextWrapper = styled.div`
