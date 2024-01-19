@@ -21,7 +21,7 @@ export default function Home() {
   const [mounted, setMounted] = useState(false)
   const [photoDetailId, setPhotoDetailId] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [photos, setPhotos] = useState<PhotoResponse>({
+  const [photoResponse, setPhotoResponse] = useState<PhotoResponse>({
     total: 0,
     total_pages: 0,
     results: [],
@@ -33,17 +33,17 @@ export default function Home() {
 
   const searchRef = useRef<HTMLInputElement>(null)
 
-  const updatePhotosBookmarkedByUser = (photos: PhotoResponse) => {
-    const newPhotos = structuredClone(photos)
-    newPhotos.results = newPhotos.results.map(updatePhotoWithBookmarkStatus)
-    return newPhotos
-  }
+  const updatePhotoResponseWithBookmarkStatus = (photoResponse: PhotoResponse) => ({
+    ...photoResponse,
+    results: photoResponse.results.map(updatePhotoWithBookmarkStatus),
+  })
 
   const searchPhoto = async (page: number) => {
     const query = searchRef.current?.value || beforeKeyword
     const { type, response } = await photoRepository.searchPhotos({ query, page })
     if (type === 'success') {
-      setPhotos(updatePhotosBookmarkedByUser(response))
+      const photoResponse = updatePhotoResponseWithBookmarkStatus(response)
+      setPhotoResponse(photoResponse)
       setBeforeKeyword(query)
     } else {
       alert('Error: search photos')
@@ -74,21 +74,25 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    photoRepository.getRandomPhotos().then(({ type, response }) => {
+    const fetchRandomPhotos = async () => {
+      const { type, response } = await photoRepository.getRandomPhotos()
       if (type === 'success') {
-        const randomPhotos = response instanceof Array ? response : [response]
+        const randomPhotos = Array.isArray(response) ? response : [response]
 
-        const photos = {
+        const randomPhotoResponse: PhotoResponse = {
           total: randomPhotos.length,
           total_pages: 1,
           results: randomPhotos,
         }
 
-        setPhotos(updatePhotosBookmarkedByUser(photos))
+        const photoResponse = updatePhotoResponseWithBookmarkStatus(randomPhotoResponse)
+        setPhotoResponse(photoResponse)
       } else {
         alert('Error: get random photos')
       }
-    })
+    }
+
+    fetchRandomPhotos()
   }, [])
 
   useEffect(() => {
@@ -96,7 +100,7 @@ export default function Home() {
   }, [isModalOpen])
 
   useEffect(() => {
-    setPhotos(updatePhotosBookmarkedByUser)
+    setPhotoResponse(updatePhotoResponseWithBookmarkStatus)
   }, [bookmark])
 
   if (!mounted) {
@@ -129,16 +133,16 @@ export default function Home() {
 
       <PhotoList
         className="p-10"
-        photos={photos.results}
+        photos={photoResponse.results}
         onHartClick={toggleBookmark}
         onPhotoClick={handlePhotoClick}
       />
 
-      {photos && photos.results.length > 0 && searchRef?.current?.value && (
+      {photoResponse?.results.length > 0 && searchRef?.current?.value && (
         <Pagination
           className="justify-center mb-10"
           currentPage={currentPage}
-          totalPages={photos.total_pages <= 200 ? photos.total_pages : 200}
+          totalPages={photoResponse.total_pages <= 200 ? photoResponse.total_pages : 200}
           range={3}
           onPageChange={handlePageChange}
         />
