@@ -39,11 +39,9 @@ export default function Home() {
     return newPhotos
   }
 
-  const handleSearchPhoto = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
+  const searchPhoto = async (page: number) => {
     const query = searchRef.current?.value || beforeKeyword
-    const { type, response } = await photoRepository.searchPhotos(query, currentPage)
+    const { type, response } = await photoRepository.searchPhotos({ query, page })
     if (type === 'success') {
       setPhotos(updatePhotosBookmarkedByUser(response))
       setBeforeKeyword(query)
@@ -57,18 +55,18 @@ export default function Home() {
     setPhotoDetailId(id)
   }
 
+  const handleSearchOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    setCurrentPage(1)
+    await searchPhoto(1)
+  }
+
   const handlePageChange = async (page: number) => {
     if (page === currentPage) return
-    setCurrentPage(page)
 
-    const query = searchRef.current?.value || beforeKeyword
-    const { type, response } = await photoRepository.searchPhotos(query, page)
-    if (type === 'success') {
-      setPhotos(updatePhotosBookmarkedByUser(response))
-      setBeforeKeyword(query)
-    } else {
-      alert('Error: search photos')
-    }
+    setCurrentPage(page)
+    await searchPhoto(page)
   }
 
   useEffect(() => {
@@ -121,7 +119,7 @@ export default function Home() {
           <Infomation>모든 지역에 있는 크리에어터들의 지원을 받습니다.</Infomation>
         </TextWrapper>
         <SearchForm
-          formProps={{ className: 'px-4 w-full', onSubmit: handleSearchPhoto }}
+          formProps={{ className: 'px-4 w-full', onSubmit: handleSearchOnSubmit }}
           inputProps={{
             ref: searchRef,
             placeholder: '고해상도 이미지 검색',
