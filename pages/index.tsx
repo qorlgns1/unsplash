@@ -6,10 +6,10 @@ import useBookmark from '@/hooks/useBookmark'
 import usePhoto from '@/hooks/usePhoto'
 import styled from '@emotion/styled'
 
-import Pagination from '@/components/Pagination'
 import SearchForm from '@/components/form/SearchForm'
 import PhotoDetailModal from '@/components/modal/PhotoDetailModal'
 import Nav from '@/components/nav/NavBar'
+import Pagination from '@/components/pagination/Pagination'
 import PhotoList from '@/components/photo/PhotoList'
 
 import { NAV_LIST } from '@/constants/nav'
