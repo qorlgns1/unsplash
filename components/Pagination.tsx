@@ -28,7 +28,7 @@ const Pagination = ({ className, currentPage, totalPages, range, onPageChange }:
       pageInfo.push(makePageInfo(i.toString(), i))
     }
 
-    if (lastPageInRange > totalPages) {
+    if (lastPageInRange >= totalPages) {
       for (let i = nextPage; i <= totalPages; i++) {
         pageInfo.push(makePageInfo(i.toString(), i))
       }
